@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+
+  news-aggregator-mongodb:
+    image: mongo:4
+    container_name: news-aggregator-mongodb
+    restart: unless-stopped
+    volumes:
+      - /data/db
+
+  news-aggregator:
+    build: build/package
+    container_name: news-aggregator
+    image: news-aggregator
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      TZ: "Europe/Moscow"
+      NEWS_AGGREGATOR_MONGODB_URI: "mongodb://news-aggregator-mongodb"
+      NEWS_AGGREGATOR_WEB_SERVER_BIND_ADDR: ":80"
+    depends_on:
+      - news-aggregator-mongodb
